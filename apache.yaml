@@ -1,0 +1,18 @@
+---
+- name: Install and configure apache on centos
+  hosts: demo
+  become: true
+  tasks:
+  - name: Install apache
+    yum:
+      name: httpd
+      state: present
+  - name: Start service
+    service:
+      name: httpd
+      state: started
+  - name: Create the content file
+    copy:
+      content: "This webpage is managed by Ansible"
+      dest: /var/www/html/index.html
+...
