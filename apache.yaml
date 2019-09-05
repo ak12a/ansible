@@ -1,6 +1,6 @@
 ---
 - name: Install and configure apache on centos
-  hosts: demo
+  hosts: all
   become: true
   tasks:
   - name: Install apache
