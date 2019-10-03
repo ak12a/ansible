@@ -15,6 +15,6 @@
       state: started
   - name: Create the content file
     copy:
-      content: "This webpage is managed by Ansible"
+      content: "This webpage is managed by Ansible through Jenkins"
       dest: /var/www/html/index.html
 ...
