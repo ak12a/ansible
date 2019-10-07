@@ -1,3 +1,3 @@
 # ansible
 
-## Trying with Jenkins weebhook
+## Trying with Jenkins webhook
