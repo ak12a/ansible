@@ -1,0 +1,40 @@
+--- 
+    - name: Deploy  User 
+      hosts: all
+      become: true
+      become_method: sudo
+      become_user: root
+      tasks:
+# Adding arvind user 
+        - name: Create User
+          user:
+             name: ansible
+            # groups: "{{ admin_group }}" 
+             create_home: true
+             comment: 'Admin user'
+             expires: -1
+             password: 'password'
+
+          tags:
+           - task1
+#  copy ssh key 
+        - name: Install SSH Key 
+          authorized_key: 
+                user: ansible
+                state: present 
+                manage_dir: true 
+                key: "{{lookup ('file', '/home/ansible/.sshd/id_rsa.pub') }}" 
+
+          tags:
+           - task2
+# Assigning sudo access to arvind user                 
+        - name: Setup arvind Sudo Access
+          copy:
+            dest: /etc/sudoers.d/arvind
+            content: 'ansible ALL=(ALL)  NOPASSWD:ALL'
+            validate: /usr/sbin/visudo -cf %s      # Verifying the sudoers file         
+            
+          tags:
+            - task3
+            
+

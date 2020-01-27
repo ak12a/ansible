@@ -1,0 +1,30 @@
+ - hosts: web
+   name: Patch  Redhat system 
+   gather_facts: false
+   become_user: root
+   become_method: sudo
+   #ansible_host_key_checking: false
+   tasks:
+     - name: "Copy Patch script From local system to all managed  nodes "
+       copy:
+          src: ./linux.sh
+          dest: /tmp
+          owner: arvind
+          mode: 0777
+    # - name: Execute script 
+     #  script: /tmp/LinuxOSupdate.sh
+      # args:
+       # executable: /bin/sh 
+     - name: "using shell module for executing script "
+       shell: ./linux.sh
+       args:
+          chdir: /tmp
+       register: result
+       
+     - debug:  
+         var: result
+     #- debug: msg= "{{ resut.stderr }} "
+
+       #var: result
+       #verbosity: 2 
+   

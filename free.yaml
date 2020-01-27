@@ -1,0 +1,9 @@
+ - hosts: web
+   name: test 
+   gather_facts: false
+   #ansible_host_key_checking: false
+   tasks:
+     - name: "check space and memory"
+       script: /root/free.sh
+       args:
+         executable:  /bin/bash 
