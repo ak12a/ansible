@@ -1,0 +1,20 @@
+ - name: ftp server 
+   hosts: all
+   become_method: sudo
+   become_user: root
+   tasks:
+      - name: install ftp server
+        yum:
+          name: vsftpd
+          state: present
+      - name: Enable service
+        service:
+           name: vsftpd 
+           state: started 
+           enabled: true
+
+      - name: copy a file 
+        copy:  
+           src: /root/ansible
+           dest: /var/ftp/pub/
+
