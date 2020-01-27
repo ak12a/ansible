@@ -1,0 +1,29 @@
+- name: Patch system by Yum
+  hosts: all
+  become_method: sudo
+  become_user: root
+  remote_user: root
+  tasks:
+    - name: Patch all servers
+      yum:
+        name: "*"
+        state: latest
+        #ignore_errors: true
+        #register: update_status
+        #- debug: 
+        # var: update_status.stdout
+# Reboot the system     
+    - name: reboot the system after update 
+      command: shutdown -r +1 # system is going to reboot 
+      async: 0
+      poll: 0       
+      ignore_errors: true
+## this task is to wait for 3  minutues for system to come up after the reboot
+    - name: pause for 180 secs
+      pause:
+        minutes: 3
+
+    - name: insure jboss service should be running 
+      service: name=httpd state=statred enabled=true
+      
+
