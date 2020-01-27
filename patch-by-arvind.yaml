@@ -21,9 +21,9 @@
 ## this task is to wait for 3  minutues for system to come up after the reboot
     - name: pause for 180 secs
       pause:
-        minutes: 3
+        minutes: 3 
 
     - name: insure jboss service should be running 
-      service: name=httpd state=statred enabled=true
+      service: name=sshd state=started enabled=true
       
 
