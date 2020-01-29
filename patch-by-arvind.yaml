@@ -1,12 +1,9 @@
 - name: Patch system by Yum
   hosts: all
-  #become_method: sudo
-  #become_user: root
-  #remote_user: root
   tasks:
     - name: Patch all servers
       yum:
-        name: "sys*"
+        name: "*"
         state: latest
       ignore_errors: true
       register: update_status
@@ -25,18 +22,24 @@
       pause:
         minutes: 1
    #
-    - name: insure jboss service should be running 
+    - name: insure ssh service should be running 
       service: name=sshd state=started enabled=true
       register: status_b
-    - name: service status 
+    - name: ssh service status output 
       debug:
-        var: "{{ status_b.stdout_lines }}"
-    - name:  verify servie status 
-      service_facts:
-      
-      register: service_state
-    - name: Show ssh service status 
-      debug:
-        vars: service_state
-          #- "{{ ssh_status.stdout_lines }}"
-               
+        msg: "{{ status_b.status.ActiveState }}"
+      tags: ssh
+    - name: stop service cron on debian, if running
+      systemd:
+      name: cron
+      state: started
+      register: time
+    - debug:
+              msg: 
+              - "{{ time.stdout}}"
+      tags:
+              - time        
+   
+
+
+
