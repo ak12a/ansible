@@ -1,29 +1,42 @@
 - name: Patch system by Yum
   hosts: all
-  become_method: sudo
-  become_user: root
-  remote_user: root
+  #become_method: sudo
+  #become_user: root
+  #remote_user: root
   tasks:
     - name: Patch all servers
       yum:
-        name: "*"
+        name: "sys*"
         state: latest
-        #ignore_errors: true
-        #register: update_status
-        #- debug: 
-        # var: update_status.stdout
+      ignore_errors: true
+      register: update_status
+    - debug: 
+         msg: 
+         - "{{ update_status.changes }}"
+         - "{{ update_status.results }}"
 # Reboot the system     
     - name: reboot the system after update 
       command: shutdown -r +1 # system is going to reboot 
       async: 0
-      poll: 0       
+      poll: 0
       ignore_errors: true
 ## this task is to wait for 3  minutues for system to come up after the reboot
     - name: pause for 180 secs
       pause:
-        minutes: 3 
-
+        minutes: 1
+   #
     - name: insure jboss service should be running 
       service: name=sshd state=started enabled=true
+      register: status_b
+    - name: service status 
+      debug:
+        var: "{{ status_b.stdout_lines }}"
+    - name:  verify servie status 
+      service_facts:
       
-
+      register: service_state
+    - name: Show ssh service status 
+      debug:
+        vars: service_state
+          #- "{{ ssh_status.stdout_lines }}"
+               

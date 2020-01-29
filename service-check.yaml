@@ -1,0 +1,34 @@
+ - name: check service status 
+   hosts: node1
+   tasks:
+   
+           # This Play will fins the status of sshd service by service module 
+
+           - name: check 'sshd' service status by service module 
+             service: name=sshd state=started enabled=true
+             register: ser1
+           - name: show the output of ssh by service module   
+             debug:
+                msg: "{{ ser1.status.ActiveState }}"
+                
+                # 2nd method by shell module 
+                #
+           - name: Check the ssh  service status by shell module 
+             shell: systemctl is-active sshd
+             warn: false
+             register: serv2
+           - name: show the oputpu  of ssh service by shell module 
+             debug:
+                   msg: "{{serv2.stdout}}"
+              
+           # 3rd method to get service status              
+
+           - name: Check docker status bu command module  
+             command: systemctl is-active docker.service 
+             warn: false
+             register: docker
+           - name: Show the output of docker service by command module  
+             debug:
+                   msg: "{{ docker.stdout }}"  
+
+                     
