@@ -1,0 +1,64 @@
+- name: Patch system by Yum
+  hosts: all 
+  become_method: sudo
+  become_user: root
+  remote_user: root
+  tasks:
+        # - name: insure jboss service should be running 
+        #   service: name=sshd state=started enabled=true
+        #   register: service_status
+        # - debug:
+        #       var: service_status 
+#         - name: List all Packages for updates
+#           yum:
+#             list: updates
+#             state: latest
+#           ignore_errors: true
+#           register : list_of_updates
+# # List of  updates 
+#         - name: Debug all packages that are available for update 
+#           debug: 
+#             msg:
+#                     - "{{ list_of_updates.results }}" 
+
+        # - name: Patch all servers
+        #   yum:
+        #     name: "*"
+        #     state: latest
+        #   ignore_errors: true
+        #   register: update_status
+        # - name: Debug all uptodated  packages 
+        #   debug: 
+        #     msg: 
+        #         - "{{ update_status.changes}}"  
+# # Let's Verify Cron servic 
+        - name: check crond 
+          command: systemctl is-active crond
+          register: crond_status 
+        - name: debug crond service status    
+          debug:
+              msg:
+                -  "{{ crond_status.stdout_lines }}" 
+                 
+# Lets verify ssh service
+        - name: check ssh service 
+          command: systemctl is-active sshd
+          register: ssh_status 
+        - name: debug SSH service status    
+          debug:
+                msg: "{{ ssh_status.stdout_lines }}"
+                    # - "{{ ssh.stdout_lines }}"
+        # - name: Check free space 
+        #   shell: lsblk
+        #   register: data
+        # - debug:
+        #         msg: 
+        #             - "{{ data.stdout_lines}}"
+# This Play will fins the status of sshd service by service module 
+
+        - name: check 'sshd' service status by service module 
+          service: name=sshd state=started enabled=true
+          register: ser1
+        - name: show the output of ssh by service module   
+          debug:
+            msg: "{{ ser1.status.ActiveState }}"

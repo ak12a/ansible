@@ -1,0 +1,38 @@
+ - name: check subscription status
+   hosts: rajesh
+   become: true
+   become_method: sudo
+   become_user: root
+   vars_prompt:
+        - name: username
+          prompt: "What is your username?"
+          private: no
+    
+        - name: password
+          prompt: "What is your password?"
+
+   tasks:
+      - name: Check subscription status
+        shell: if subscription-manager list | egrep -i  Subscribed | grep -v grep > /dev/null ; then echo 'active';else echo 'not_active';fi
+        register: subscription_status
+      - name: Print subscription status
+        debug:
+           msg:  "{{subscription_status.stdout}}"
+
+# Register for redhat subscription
+      - name: Register for redhat-subscription
+        redhat_subscription:
+              state: present
+              username: "{{username}}"
+              password: "{{password}}"
+              force_register: yes
+              auto_attach: true
+        register: subscription_attachment
+        when: subscription_status.stdout == "not_active"
+# Refresh the status  of redhat subscription inscase  register
+      - name: Pull the latest subscription data from the server
+        shell: subscription-manager refresh 
+        when: subscription_status.stdout == "not_active"
+
+
+     

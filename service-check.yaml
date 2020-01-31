@@ -4,10 +4,10 @@
    
            # This Play will fins the status of sshd service by service module 
 
-           - name: check 'sshd' service status by service module 
-             service: name=sshd state=started enabled=true
+           - name: check 'cron' service status by service module 
+             service: name=crond state=started enabled=true
              register: ser1
-           - name: show the output of ssh by service module   
+           - name: show the output of cron by service module   
              debug:
                 msg: "{{ ser1.status.ActiveState }}"
                 
@@ -23,12 +23,12 @@
               
            # 3rd method to get service status              
 
-           - name: Check docker status bu command module  
-             command: systemctl is-active docker.service 
+           - name: Check jboss status bu command module  
+             command: systemctl is-active jboss.service 
              warn: false
-             register: docker
+             register: jboss
            - name: Show the output of docker service by command module  
              debug:
-                   msg: "{{ docker.stdout }}"  
+                   msg: "{{ jboss.stdout }}"  
 
                      

@@ -1,0 +1,18 @@
+- name: patch Redhat subscription servers 
+  become: true
+  become_method: sudo 
+  become_user: akumar
+  vars:
+    repos: subscription-manager
+    user_name: arvind.kumar@uniteller.com
+    redhat_password: Uniteller@2020_1
+  hosts: all
+  tasks:
+    - name: Check Redhat subscription 
+      redhat_subscription:
+         state: present
+         username: "{{user_name}}"
+         password: "{{redhat_password}}"
+         auto_attach: true
+
+
