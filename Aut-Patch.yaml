@@ -1,0 +1,48 @@
+- name: Update  all Linux system that support yum module 
+  hosts: all
+  become: true
+  become_method: sudo
+  become_user: root
+  gather_facts: false
+  tasks:
+    - name: Patch all servers
+      yum:
+        name: "*"
+        state: latest
+      ignore_errors: true
+      register: update_status
+    - debug: 
+         msg: "{{ update_status.changes | default( update_status.results ) }}" 
+# Reboot the system     
+    - name: reboot the system after update 
+      command: shutdown -r +1 # system is going to reboot 
+      async: 0
+      poll: 0
+      ignore_errors: true
+ # This task is to wait for 3  minutues for system to come up after the reboot
+    - name: pause for 180 secs
+      pause:
+        minutes: 3     # Please give the time according to your system performance  
+# Check the system status after reboot 
+    - name: check if system responding to ssh
+      wait_for:
+            host: "{{ ansible_ssh_host | default(inventory_hostname) }}"
+            port: 22
+            delay: 15
+            timeout: 300
+            state: started
+# Lets verify wheather crond  services is running or not!
+    - name: check crond 
+      command: systemctl is-active crond
+      warn: false
+      register: crond_status 
+    - name: debug crond service status    
+      debug:
+          msg:
+            -  "{{ crond_status.stdout_lines }}" 
+      ignore_errors: true      
+# Similar if you want to check some other service status then you can put Bellow            
+    
+
+
+

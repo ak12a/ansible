@@ -1,0 +1,56 @@
+# This Playbook is used for redhat_subscription 
+# If subscription is not subscribed then it will register for subscription by putting your user name and password 
+# IF redhat_subscription already subscribed then it will skip auto_subscription and show the active repository 
+
+
+- name: check subscription status
+  hosts: all
+  become: true
+  become_method: sudo
+  become_user: root
+  gather_facts: false
+  vars_prompt:          # This variable will prompt for user name and password 
+        - name: username
+          prompt: "What is your username for Red-hat portal ?"
+          private: no
+        - name: password
+          prompt: "What is your password of Red-hat Portal ?"
+  tasks:
+# First check the subscription status   
+      - name: Check subscription status
+        shell: if subscription-manager list | grep -iw "\Not\|Unknown"  | grep -v grep > /dev/null ; then echo 'inactive';else echo 'active';fi
+        register: subscription_status
+      - name: Print subscription status
+        debug:
+           msg:  "{{subscription_status.stdout}}"
+        ignore_errors: true   
+        tags:
+            - task1
+# Register for redhat subscription
+      - name: Register for redhat-subscription
+        redhat_subscription:
+              state: present
+              username: "{{username}}"
+              password: "{{password}}"
+              force_register: yes
+              auto_attach: true
+        register: subscription_attachment
+        when: subscription_status.stdout == "inactive"
+        tags:
+            - task2
+# Refresh the status  of redhat subscription inscase  register
+      - name: Pull the latest subscription data from the server
+        shell: subscription-manager refresh
+        when: subscription_status.stdout == "inactive"
+        tags:
+            - task3
+# Show enabled repos after subscription
+      - name: show available repos after subscription
+        shell: subscription-manager repos --list-enabled
+        register: enabled_repos
+      - name:  current active repository after subscription of redhat
+        debug:
+            msg: "{{ enabled_repos.stdout_lines }}"
+       #when:   subscription_status.stdout == "active"
+        tags:
+           - task4

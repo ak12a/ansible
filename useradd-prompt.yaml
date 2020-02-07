@@ -1,0 +1,35 @@
+# This Playbook will add user and prompt for user name
+- name: Adding user by username prompt
+  hosts: node1
+  become: true
+  become_method: sudo
+  become_user: root
+  gather_facts: false
+  vars_prompt:
+    - name: user
+      prompt: "insert your user name"
+      private: no
+    - name: password
+      prompt: "Putt your new password"
+      private: yes
+      confirm: yes
+      encrypt: "sha512_crypt"
+      salt_size: 7
+  tasks:
+      - name: Add user
+        user:
+            name: "{{ user }}"
+            create_home: true
+            password: "{{ password }}"
+# Grant sudo privilges if you need 
+      - name: Add above users in sudoers 
+        copy:
+          dest: /etc/sudoers.d/{{ user }}
+          content: '{"{{ user }}" ALL=(ALL)  ALL }'   # some syntax error occuring in "{{ user }} " variable 
+          validate: /usr/sbin/visudo -cf %s      # Verifying the sudoers file     
+      - name: Install SSH Key 
+        authorized_key: 
+            user: "{{ user }}"
+            state: present 
+            manage_dir: true 
+            key: "{{lookup ('file', '/home/'{{ user }}'/.sshd/id_rsa.pub') }}"  # some syntax parser error occuring in "{{ user }} " variable 

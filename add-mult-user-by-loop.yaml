@@ -1,0 +1,47 @@
+  - name: Deploy  User 
+    hosts: node2
+    become: true
+    become_method: sudo
+    become_user: root
+    tasks:
+# Adding arvind user 
+      - name: Create User
+        user:
+            name: "{{ item }}"
+            state: present
+            create_home: true
+            comment: 'Admin user'
+            password: "{{ 'Password@123' | password_hash('sha512') }}"
+            #expires: -1  # not working with me 
+        with_items:
+            - test1
+            - test2
+            - test3
+            - test4     
+         
+# #  copy ssh key  if  required in feature 
+# Modify according to usages 
+#
+#         - name: Install SSH Key 
+#           authorized_key: 
+#                 user: ansible
+#                 state: present 
+#                 manage_dir: true 
+#                 key: "{{lookup ('file', '/home/test-user/.sshd/id_rsa.pub') }}" 
+
+         
+# Assigning sudo access to test-user user                 
+      - name: Setup {{ list }} Sudo Access
+        copy:
+          dest: /etc/sudoers.d/"{{ list }}"
+         #content: 'tset-user ALL=(ALL)  ALL'
+          content:    '{"{{ list }}" ALL=(ALL)  ALL}' 
+          validate: /usr/sbin/visudo -cf %s      # Verifying the sudoers file
+          with_list:
+            - test1
+            - test2
+            - test3
+            - test4              
+          
+        
+

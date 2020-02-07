@@ -12,7 +12,7 @@
             # groups: "{{ admin_group }}" 
              create_home: true
              comment: 'Admin user'
-             expires: -1
+             #expires: -1
              password: 'password'
 
           tags:
