@@ -1,0 +1,15 @@
+trivy --reset
+
+trivy i  image_name > logs
+trivy --exit-code=1 imagename
+
+tivy can run independently 
+
+
+./docker-slim   # it remove unwanted packages from a docker image which is not requ
+its figureout what really not necessory to oprate nginx image  and build a new image as we tagged 
+
+build --target nginx  --tag nginx:slim
+
+
+docker search -f is-official=true ubuntu

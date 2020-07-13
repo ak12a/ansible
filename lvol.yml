@@ -1,0 +1,40 @@
+- name: create vg
+   hosts: node00
+   tasks:
+     - name: create vg_sql volume group
+       lvg:
+         vg: vg_sql
+         pvs: /dev/vdb1
+
+
+##################
+
+ -  name: create logival volume
+    hosts: node00
+    tasks:
+    - name: create logiacl vol named lv_data
+      lvol:
+        vg: vg_sql
+        lv: lv_data
+        size: 500M
+########################        
+
+- name: create filesystem
+  hosts: node00
+  tasks:
+   - name: create ext4 filesystem
+     filesystem:
+        fstype: ext4
+        dev: /dev/vg_sql/lv_data
+#####################################
+
+-  name: mount filesystem
+   hosts: node00
+   tasks:
+    - name: mount lvm on /mnt/data
+      mount:
+       src: /dev/vg_sql/lv_data
+       name: /mnt/data
+       fstype: ext4
+       state: mounted
+############################

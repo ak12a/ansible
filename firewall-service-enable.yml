@@ -1,0 +1,5 @@
+- hosts: web1
+  tasks:
+    - name: install & Enable firewall service
+      yum:  name=firewalld state=present
+    - service:  name=firewalld state=started enabled=true

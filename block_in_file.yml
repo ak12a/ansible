@@ -1,0 +1,12 @@
+ - name: create a index.html file
+   hosts: web1
+   tasks:
+      - name: create a index.html file in /var/www/html/index.html
+        blockinfile:
+          path: /var/www/html/index.html
+          insertbefore:  "This line was added using Ansible lineinfile module!"
+          block: |
+                     Welcome to KodeKloud!
+                     This is Ansible Lab.
+          owner: apache
+          group: apache

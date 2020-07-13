@@ -1,0 +1,9 @@
+- hosts: web1
+  tasks:    
+    - name:  disable web2 server ip in firewall
+      firewalld:
+            zone: block
+            port: 161/udp
+            permanent: true
+            immediate: yes
+            state: enabled

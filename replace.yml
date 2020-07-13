@@ -1,0 +1,9 @@
+-  name: run httpd on 8080 port   hosts: web1
+   tasks:
+     - name: replace 80 t0 8080 port on httpd.conf
+       replace:
+         path: /etc/httpd/conf/httpd.conf
+         regexp: 'Listen 80'
+         replace: 'Listen 8080'
+     - name: Restart apcahe server
+       service: name=httpd state=restarted

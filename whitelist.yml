@@ -1,0 +1,9 @@
+ hosts: web1
+ tasks:
+    - name:  enable web2 server ip in firewall
+      firewalld:
+            source: 172.20.1.101/32
+            zone: internal
+            permanent: true
+            state: enabled
+            immediate: yes

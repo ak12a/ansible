@@ -1,0 +1,20 @@
+- name: Setup NTP client 
+  hosts: all
+  become: true
+  become_method: sudo
+  become_user: root
+  vars:
+      ntp_server1: node1
+      ntp_server2: node2
+  tasks:
+    # This Play will ensure whether chronyd package is installed or not if installed then it will remove it 
+     - name: Fetch the information whether chronyd is installed onr not  if installed then remove it.
+       yum: 
+          name: chronyd
+          state: absent
+       tags: remove_chrony,start_ntp
+    # This Play will install ntp 
+     - name: Install ntp package
+       yum: 
+          name: ntp
+          state: latest

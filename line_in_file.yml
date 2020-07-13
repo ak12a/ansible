@@ -1,0 +1,8 @@
+- name: create a index.html file
+   hosts: web1
+   tasks:
+      - name: create a index.html file in /var/www/html/index.html
+        lineinfile:
+          path: /var/www/html/index.html
+          line: This line was added using Ansible lineinfile module!
+          create: true
